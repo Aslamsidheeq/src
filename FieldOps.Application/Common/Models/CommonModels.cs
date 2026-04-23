@@ -33,6 +33,7 @@ public static class ErrorCodes
     public const string ValidationFailed = "VALIDATION_FAILED";
     public const string Unauthorized = "UNAUTHORIZED";
     public const string TenantNotFound = "TENANT_NOT_FOUND";
+    public const string TenantAlreadyExists = "TENANT_ALREADY_EXISTS";
     public const string TenantSuspended = "TENANT_SUSPENDED";
     public const string WorkOrderNotFound = "WORK_ORDER_NOT_FOUND";
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
