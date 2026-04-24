@@ -5,6 +5,7 @@ public sealed class AuthResponse
     public string AccessToken { get; set; } = string.Empty;
     public DateTime AccessTokenExpiresAtUtc { get; set; }
     public string RefreshToken { get; set; } = string.Empty;
+    public string RedirectPath { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
     public Guid UserId { get; set; }
     public Guid? BranchId { get; set; }

@@ -53,11 +53,22 @@ public sealed class LoginCommandHandler(
         tenantDbContext.RefreshTokens.Add(refresh);
         await tenantDbContext.SaveChangesAsync(cancellationToken);
 
+        var redirectPath = user.Role switch
+        {
+            Domain.Enums.UserRole.TenantAdmin => "/dashboard/tenant-admin",
+            Domain.Enums.UserRole.BranchManager => "/dashboard/branch-manager",
+            Domain.Enums.UserRole.Supervisor => "/dashboard/supervisor",
+            Domain.Enums.UserRole.Accountant => "/dashboard/accountant",
+            Domain.Enums.UserRole.HRManager => "/dashboard/hr",
+            _ => "/dashboard"
+        };
+
         return Result<AuthResponse>.Ok(new AuthResponse
         {
             AccessToken = accessToken,
             AccessTokenExpiresAtUtc = DateTime.UtcNow.AddMinutes(15),
             RefreshToken = refresh.Token,
+            RedirectPath = redirectPath,
             Role = user.Role.ToString(),
             UserId = user.Id,
             BranchId = user.Role == Domain.Enums.UserRole.TenantAdmin ? null : user.BranchId,
