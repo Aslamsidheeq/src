@@ -10,12 +10,12 @@ public sealed class Branch : BaseEntity
     public string Trn { get; set; } = string.Empty;
     public string Iban { get; set; } = string.Empty;
     public string InvoicePrefix { get; set; } = "INV";
-    public Guid? ManagerId { get; set; }
+    public int? ManagerId { get; set; }
 }
 
 public sealed class User : BaseEntity
 {
-    public Guid BranchId { get; set; }
+    public int BranchId { get; set; }
     public UserRole Role { get; set; }
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
@@ -24,7 +24,7 @@ public sealed class User : BaseEntity
 
 public sealed class RefreshToken : BaseEntity
 {
-    public Guid UserId { get; set; }
+    public int UserId { get; set; }
     public string Token { get; set; } = string.Empty;
     public DateTime ExpiresAtUtc { get; set; }
     public DateTime? RevokedAtUtc { get; set; }
@@ -32,7 +32,7 @@ public sealed class RefreshToken : BaseEntity
 
 public sealed class FieldWorker : BaseEntity
 {
-    public Guid BranchId { get; set; }
+    public int BranchId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Nationality { get; set; } = string.Empty;
     public DateTime? VisaExpiryUtc { get; set; }
@@ -43,7 +43,7 @@ public sealed class FieldWorker : BaseEntity
 
 public sealed class WorkerDocument : BaseEntity
 {
-    public Guid WorkerId { get; set; }
+    public int WorkerId { get; set; }
     public DocumentType Type { get; set; }
     public string BlobUrl { get; set; } = string.Empty;
     public DateTime? ExpiryDateUtc { get; set; }
@@ -51,13 +51,13 @@ public sealed class WorkerDocument : BaseEntity
 
 public sealed class WorkerSkill : BaseEntity
 {
-    public Guid WorkerId { get; set; }
+    public int WorkerId { get; set; }
     public string SkillName { get; set; } = string.Empty;
 }
 
 public sealed class Client : BaseEntity
 {
-    public Guid BranchId { get; set; }
+    public int BranchId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
@@ -67,8 +67,8 @@ public sealed class Client : BaseEntity
 
 public sealed class ClientSite : BaseEntity
 {
-    public Guid ClientId { get; set; }
-    public Guid BranchId { get; set; }
+    public int ClientId { get; set; }
+    public int BranchId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
     public string Area { get; set; } = string.Empty;
@@ -86,10 +86,10 @@ public sealed class ServiceCategory : BaseEntity
 
 public sealed class WorkOrder : BaseEntity
 {
-    public Guid BranchId { get; set; }
-    public Guid ClientId { get; set; }
-    public Guid SiteId { get; set; }
-    public Guid CategoryId { get; set; }
+    public int BranchId { get; set; }
+    public int ClientId { get; set; }
+    public int SiteId { get; set; }
+    public int CategoryId { get; set; }
     public DateTime ScheduledAtUtc { get; set; }
     public WorkOrderStatus Status { get; set; } = WorkOrderStatus.Draft;
     public string CustomFieldsJson { get; set; } = "{}";
@@ -97,8 +97,8 @@ public sealed class WorkOrder : BaseEntity
 
 public sealed class WorkOrderAssignment : BaseEntity
 {
-    public Guid WorkOrderId { get; set; }
-    public Guid WorkerId { get; set; }
+    public int WorkOrderId { get; set; }
+    public int WorkerId { get; set; }
     public DateTime? CheckinTimeUtc { get; set; }
     public DateTime? CheckoutTimeUtc { get; set; }
     public string? Notes { get; set; }
@@ -106,7 +106,7 @@ public sealed class WorkOrderAssignment : BaseEntity
 
 public sealed class WorkOrderPhoto : BaseEntity
 {
-    public Guid WorkOrderId { get; set; }
+    public int WorkOrderId { get; set; }
     public string BlobUrl { get; set; } = string.Empty;
     public string? Caption { get; set; }
     public DateTime TakenAtUtc { get; set; } = DateTime.UtcNow;
@@ -114,8 +114,8 @@ public sealed class WorkOrderPhoto : BaseEntity
 
 public sealed class Attendance : BaseEntity
 {
-    public Guid WorkerId { get; set; }
-    public Guid BranchId { get; set; }
+    public int WorkerId { get; set; }
+    public int BranchId { get; set; }
     public DateTime DateUtc { get; set; }
     public AttendanceStatus Status { get; set; }
     public string? Notes { get; set; }
@@ -123,9 +123,9 @@ public sealed class Attendance : BaseEntity
 
 public sealed class Invoice : BaseEntity
 {
-    public Guid BranchId { get; set; }
-    public Guid WorkOrderId { get; set; }
-    public Guid ClientId { get; set; }
+    public int BranchId { get; set; }
+    public int WorkOrderId { get; set; }
+    public int ClientId { get; set; }
     public string InvoiceNumber { get; set; } = string.Empty;
     public decimal SubtotalAed { get; set; }
     public decimal VatAed { get; set; }
@@ -134,12 +134,12 @@ public sealed class Invoice : BaseEntity
     public DateTime IssueDateUtc { get; set; } = DateTime.UtcNow;
     public DateTime DueDateUtc { get; set; }
     public string CompanyTrn { get; set; } = string.Empty;
-    public Guid? OriginalInvoiceId { get; set; }
+    public int? OriginalInvoiceId { get; set; }
 }
 
 public sealed class InvoiceLineItem : BaseEntity
 {
-    public Guid InvoiceId { get; set; }
+    public int InvoiceId { get; set; }
     public string Description { get; set; } = string.Empty;
     public decimal Quantity { get; set; }
     public decimal UnitPriceAed { get; set; }
@@ -149,7 +149,7 @@ public sealed class InvoiceLineItem : BaseEntity
 
 public sealed class Payment : BaseEntity
 {
-    public Guid InvoiceId { get; set; }
+    public int InvoiceId { get; set; }
     public decimal AmountAed { get; set; }
     public PaymentMethod Method { get; set; }
     public string? Reference { get; set; }
@@ -158,8 +158,8 @@ public sealed class Payment : BaseEntity
 
 public sealed class FollowUp : BaseEntity
 {
-    public Guid WorkOrderId { get; set; }
-    public Guid ClientId { get; set; }
+    public int WorkOrderId { get; set; }
+    public int ClientId { get; set; }
     public FollowUpType Type { get; set; }
     public FollowUpChannel Channel { get; set; }
     public DateTime SentAtUtc { get; set; } = DateTime.UtcNow;

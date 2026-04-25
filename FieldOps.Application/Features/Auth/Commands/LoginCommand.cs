@@ -1,7 +1,7 @@
 using FieldOps.Application.Common.Interfaces;
 using FieldOps.Application.Common.Models;
 using FieldOps.Application.Features.Auth.DTOs;
-using FluentValidation;
+using FieldOps.Domain.Entities.Tenant;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,49 +9,58 @@ namespace FieldOps.Application.Features.Auth.Commands;
 
 public sealed record LoginCommand(LoginRequest Request) : IRequest<Result<AuthResponse>>;
 
-public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
-{
-    public LoginCommandValidator()
-    {
-        RuleFor(x => x.Request.Subdomain).NotEmpty();
-        RuleFor(x => x.Request.Email).NotEmpty().EmailAddress();
-        RuleFor(x => x.Request.Password).NotEmpty().MinimumLength(8);
-    }
-}
-
 public sealed class LoginCommandHandler(
-    IMasterDbContext masterDbContext,
-    ITenantDbContext tenantDbContext,
-    IPasswordService passwordService,
+    IMasterDbContext masterDb,
+    ITenantDbContextFactory tenantDbContextFactory,
     IJwtService jwtService,
-    IRefreshTokenService refreshTokenService) : IRequestHandler<LoginCommand, Result<AuthResponse>>
+    IPasswordService passwordService) : IRequestHandler<LoginCommand, Result<AuthResponse>>
 {
     public async Task<Result<AuthResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var tenant = await masterDbContext.Tenants.FirstOrDefaultAsync(
-            x => x.Subdomain == request.Request.Subdomain && x.IsActive,
+        var tenant = await masterDb.Tenants
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                t => t.Subdomain == request.Request.Subdomain && t.IsActive,
             cancellationToken);
 
         if (tenant is null)
         {
-            return Result<AuthResponse>.Fail("Tenant not found.", ErrorCodes.TenantNotFound);
+            return Result<AuthResponse>.Fail("Tenant not found or suspended.", ErrorCodes.TenantNotFound);
         }
 
-        var user = await tenantDbContext.Users.FirstOrDefaultAsync(x => x.Email == request.Request.Email && x.IsActive, cancellationToken);
-        if (user is null || !passwordService.Verify(request.Request.Password, user.PasswordHash))
+        await using var tenantDb = tenantDbContextFactory.Create(tenant.DatabaseName);
+
+        var user = await tenantDb.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                u => u.Email == request.Request.Email && u.IsActive,
+                cancellationToken);
+
+        if (user is null)
         {
-            return Result<AuthResponse>.Fail("Invalid credentials.", ErrorCodes.InvalidCredentials);
+            return Result<AuthResponse>.Fail("Invalid email or password.", ErrorCodes.InvalidCredentials);
         }
 
-        var accessToken = jwtService.GenerateAccessToken(user, tenant.Id.ToString(), tenant.DatabaseName, user.Role == Domain.Enums.UserRole.TenantAdmin ? null : user.BranchId);
-        var refresh = new Domain.Entities.Tenant.RefreshToken
+        if (!passwordService.Verify(request.Request.Password, user.PasswordHash))
+        {
+            return Result<AuthResponse>.Fail("Invalid email or password.", ErrorCodes.InvalidCredentials);
+        }
+
+        var branch = await tenantDb.Branches
+            .AsNoTracking()
+            .FirstOrDefaultAsync(b => b.Id == user.BranchId, cancellationToken);
+
+        var accessToken = jwtService.GenerateToken(user, tenant, branch);
+
+        await using var tenantDbWrite = tenantDbContextFactory.Create(tenant.DatabaseName);
+        var refresh = new RefreshToken
         {
             UserId = user.Id,
-            Token = refreshTokenService.GenerateSecureToken(),
+            Token = Guid.NewGuid().ToString("N"),
             ExpiresAtUtc = DateTime.UtcNow.AddDays(7)
         };
-        tenantDbContext.RefreshTokens.Add(refresh);
-        await tenantDbContext.SaveChangesAsync(cancellationToken);
+        tenantDbWrite.RefreshTokens.Add(refresh);
+        await tenantDbWrite.SaveChangesAsync(cancellationToken);
 
         var redirectPath = user.Role switch
         {

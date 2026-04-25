@@ -18,7 +18,7 @@ public sealed class WorkOrdersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> Create([FromBody] object request, CancellationToken cancellationToken)
         => Ok(await mediator.Send(new PlaceholderCommand("WorkOrders", "Create", request), cancellationToken));
 
-    [HttpPost("{id:guid}/status")]
-    public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] object request, CancellationToken cancellationToken)
+    [HttpPost("{id:int}/status")]
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] object request, CancellationToken cancellationToken)
         => Ok(await mediator.Send(new PlaceholderCommand("WorkOrders", $"UpdateStatus:{id}", request), cancellationToken));
 }

@@ -7,8 +7,8 @@ public sealed class AuthResponse
     public string RefreshToken { get; set; } = string.Empty;
     public string RedirectPath { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
-    public Guid UserId { get; set; }
-    public Guid? BranchId { get; set; }
+    public int UserId { get; set; }
+    public int? BranchId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string TenantId { get; set; } = string.Empty;
     public string TenantDb { get; set; } = string.Empty;

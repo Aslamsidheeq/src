@@ -19,6 +19,9 @@ public sealed class TenantSchemaProvisioner(
         tenant.DatabaseName = tenantDatabaseName;
 
         masterDbContext.Tenants.Add(tenant);
+        await masterDbContext.SaveChangesAsync(cancellationToken);
+
+        // With int identity keys, tenant.Id is assigned only after SaveChanges.
         masterDbContext.Subscriptions.Add(new Subscription
         {
             TenantId = tenant.Id,

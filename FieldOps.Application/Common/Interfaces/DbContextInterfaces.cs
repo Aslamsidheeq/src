@@ -11,7 +11,7 @@ public interface IMasterDbContext
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public interface ITenantDbContext
+public interface ITenantDbContext : IAsyncDisposable
 {
     DbSet<Branch> Branches { get; }
     DbSet<User> Users { get; }

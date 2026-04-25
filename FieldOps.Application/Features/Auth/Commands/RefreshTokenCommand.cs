@@ -1,34 +1,79 @@
 using FieldOps.Application.Common.Interfaces;
 using FieldOps.Application.Common.Models;
 using FieldOps.Application.Features.Auth.DTOs;
+using System.Security.Claims;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Application.Features.Auth.Commands;
 
-public sealed record RefreshTokenCommand(string RefreshToken) : IRequest<Result<AuthResponse>>;
+public sealed record RefreshTokenCommand(string AccessToken, string RefreshToken) : IRequest<Result<AuthResponse>>;
 
 public sealed class RefreshTokenCommandHandler(
-    ITenantDbContext tenantDbContext,
-    ICurrentUserService currentUserService,
-    IJwtService jwtService,
-    IRefreshTokenService refreshTokenService) : IRequestHandler<RefreshTokenCommand, Result<AuthResponse>>
+    IMasterDbContext masterDb,
+    ITenantDbContextFactory tenantDbContextFactory,
+    IJwtService jwtService) : IRequestHandler<RefreshTokenCommand, Result<AuthResponse>>
 {
     public async Task<Result<AuthResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var existing = await tenantDbContext.RefreshTokens
-            .FirstOrDefaultAsync(x => x.Token == request.RefreshToken && x.RevokedAtUtc == null, cancellationToken);
-        if (existing is null || existing.ExpiresAtUtc < DateTime.UtcNow)
+        IEnumerable<Claim> claims;
+        try
         {
-            return Result<AuthResponse>.Fail("Invalid refresh token.", ErrorCodes.Unauthorized);
+            claims = jwtService.GetClaimsFromExpiredToken(request.AccessToken);
+        }
+        catch
+        {
+            return Result<AuthResponse>.Fail("Invalid token.", ErrorCodes.Unauthorized);
         }
 
-        var user = await tenantDbContext.Users.FirstAsync(x => x.Id == existing.UserId, cancellationToken);
-        var rotated = await refreshTokenService.RotateAsync(existing, cancellationToken);
-        tenantDbContext.RefreshTokens.Add(rotated);
-        await tenantDbContext.SaveChangesAsync(cancellationToken);
+        var tenantDb = claims.FirstOrDefault(c => c.Type == "tenant_db")?.Value;
+        var userIdStr = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        var accessToken = jwtService.GenerateAccessToken(user, currentUserService.TenantId, currentUserService.TenantDb, currentUserService.BranchId);
+        if (string.IsNullOrWhiteSpace(tenantDb) || !int.TryParse(userIdStr, out var userId))
+        {
+            return Result<AuthResponse>.Fail("Invalid token.", ErrorCodes.Unauthorized);
+        }
+
+        await using var db = tenantDbContextFactory.Create(tenantDb);
+
+        var existing = await db.RefreshTokens
+            .FirstOrDefaultAsync(
+                t => t.Token == request.RefreshToken
+                     && t.UserId == userId
+                     && t.RevokedAtUtc == null
+                     && t.ExpiresAtUtc > DateTime.UtcNow,
+                cancellationToken);
+
+        if (existing is null)
+        {
+            return Result<AuthResponse>.Fail("Invalid or expired refresh token.", ErrorCodes.Unauthorized);
+        }
+
+        existing.RevokedAtUtc = DateTime.UtcNow;
+        var rotated = new Domain.Entities.Tenant.RefreshToken
+        {
+            UserId = userId,
+            Token = Guid.NewGuid().ToString("N"),
+            ExpiresAtUtc = DateTime.UtcNow.AddDays(7)
+        };
+        db.RefreshTokens.Add(rotated);
+
+        var user = await db.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        var tenant = await masterDb.Tenants
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.DatabaseName == tenantDb, cancellationToken);
+
+        if (user is null || tenant is null)
+        {
+            return Result<AuthResponse>.Fail("User or tenant not found.", ErrorCodes.TenantNotFound);
+        }
+
+        await db.SaveChangesAsync(cancellationToken);
+
+        var accessToken = jwtService.GenerateToken(user, tenant, null);
+
         return Result<AuthResponse>.Ok(new AuthResponse
         {
             AccessToken = accessToken,
@@ -36,10 +81,10 @@ public sealed class RefreshTokenCommandHandler(
             RefreshToken = rotated.Token,
             Role = user.Role.ToString(),
             UserId = user.Id,
-            BranchId = currentUserService.BranchId,
+            BranchId = user.BranchId,
             Email = user.Email,
-            TenantId = currentUserService.TenantId,
-            TenantDb = currentUserService.TenantDb
+            TenantId = tenant.Id.ToString(),
+            TenantDb = tenant.DatabaseName
         });
     }
 }

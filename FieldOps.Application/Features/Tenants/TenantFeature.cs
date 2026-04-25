@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Application.Features.Tenants;
 
-public sealed record TenantDto(Guid Id, string Name, string Subdomain, bool IsActive);
+public sealed record TenantDto(int Id, string Name, string Subdomain, bool IsActive);
 public sealed record CreateTenantRequest(string Name, string Subdomain, string Trn, string ContactEmail, string AdminPassword);
 
 public sealed record CreateTenantCommand(CreateTenantRequest Request) : IRequest<Result<TenantDto>>;

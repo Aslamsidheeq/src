@@ -24,12 +24,14 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.Attendance", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("char(36)");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -52,8 +54,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -62,9 +64,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.Branch", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -90,8 +94,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<Guid?>("ManagerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int?>("ManagerId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -111,12 +115,14 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.Client", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("char(36)");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -155,9 +161,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.ClientSite", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -167,11 +175,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -202,12 +210,14 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.FieldWorker", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("char(36)");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -245,15 +255,17 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.FollowUp", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Channel")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -276,8 +288,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("WorkOrderId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("WorkOrderId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -286,15 +298,17 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.Invoice", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("char(36)");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<string>("CompanyTrn")
                         .IsRequired()
@@ -319,8 +333,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime>("IssueDateUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("OriginalInvoiceId")
-                        .HasColumnType("char(36)");
+                    b.Property<int?>("OriginalInvoiceId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -340,8 +354,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<Guid>("WorkOrderId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("WorkOrderId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -350,9 +364,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.InvoiceLineItem", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -364,8 +380,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<Guid>("InvoiceId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
@@ -392,9 +408,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.Payment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("AmountAed")
                         .HasColumnType("decimal(65,30)");
@@ -405,8 +423,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("InvoiceId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
@@ -430,9 +448,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.RefreshToken", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -456,8 +476,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -466,9 +486,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.ServiceCategory", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -502,9 +524,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.TenantSettings", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -537,12 +561,14 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("char(36)");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -577,18 +603,20 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.WorkOrder", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("char(36)");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -606,8 +634,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime>("ScheduledAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("SiteId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -622,9 +650,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.WorkOrderAssignment", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CheckinTimeUtc")
                         .HasColumnType("datetime(6)");
@@ -647,11 +677,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("WorkOrderId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("WorkOrderId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -660,9 +690,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.WorkOrderPhoto", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlobUrl")
                         .IsRequired()
@@ -686,8 +718,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("WorkOrderId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("WorkOrderId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -696,9 +728,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.WorkerDocument", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlobUrl")
                         .IsRequired()
@@ -722,8 +756,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -732,9 +766,11 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("FieldOps.Domain.Entities.Tenant.WorkerSkill", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime(6)");
@@ -742,8 +778,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("FieldWorkerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int?>("FieldWorkerId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
@@ -755,8 +791,8 @@ namespace FieldOps.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<DateTime?>("UpdatedAtUtc")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("WorkerId")
-                        .HasColumnType("char(36)");
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

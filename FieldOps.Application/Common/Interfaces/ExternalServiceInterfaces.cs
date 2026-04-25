@@ -15,8 +15,8 @@ public interface INotificationService
 
 public interface IPdfService
 {
-    Task<byte[]> GenerateInvoicePdfAsync(Guid invoiceId, CancellationToken cancellationToken);
-    Task<byte[]> GenerateServiceReportPdfAsync(Guid workOrderId, CancellationToken cancellationToken);
+    Task<byte[]> GenerateInvoicePdfAsync(int invoiceId, CancellationToken cancellationToken);
+    Task<byte[]> GenerateServiceReportPdfAsync(int workOrderId, CancellationToken cancellationToken);
 }
 
 public interface IEmailService

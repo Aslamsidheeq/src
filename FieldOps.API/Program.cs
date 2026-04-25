@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using FieldOps.API.Extensions;
 using FieldOps.API.Hubs;
 using FieldOps.API.Middleware;
@@ -23,7 +24,12 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o =>
+    {
+        // Allow enums as strings (e.g. "Dubai") for Angular clients.
+        o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -78,6 +84,7 @@ builder.Services.AddSignalR();
 builder.Services.AddDbContext<MasterDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("MasterDb"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MasterDb"))));
 builder.Services.AddSingleton<TenantConnectionStringFactory>();
+builder.Services.AddSingleton<ITenantDbContextFactory, TenantDbContextFactory>();
 builder.Services.AddDbContext<TenantDbContext>((sp, options) =>
 {
     var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
@@ -119,12 +126,12 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<TenantMiddleware>();
-app.UseMiddleware<BranchScopeMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors("DefaultCors");
 app.UseAuthentication();
+app.UseMiddleware<TenantMiddleware>();
+app.UseMiddleware<BranchScopeMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<WorkOrderHub>("/hubs/work-orders");

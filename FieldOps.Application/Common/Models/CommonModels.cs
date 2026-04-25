@@ -21,7 +21,7 @@ public sealed class PagedResult<T>
 
 public sealed class TenantContext
 {
-    public Guid TenantId { get; init; }
+    public int TenantId { get; init; }
     public string TenantName { get; init; } = string.Empty;
     public string Subdomain { get; init; } = string.Empty;
     public string DatabaseName { get; init; } = string.Empty;
@@ -37,4 +37,7 @@ public static class ErrorCodes
     public const string TenantSuspended = "TENANT_SUSPENDED";
     public const string WorkOrderNotFound = "WORK_ORDER_NOT_FOUND";
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
+    public const string BranchNotFound = "BRANCH_NOT_FOUND";
+    public const string BranchHasActiveUsers = "BRANCH_HAS_ACTIVE_USERS";
+    public const string BranchHasActiveWorkOrders = "BRANCH_HAS_ACTIVE_WORK_ORDERS";
 }

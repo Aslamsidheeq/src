@@ -5,21 +5,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FieldOps.Application.Features.Auth.Commands;
 
-public sealed record LogoutCommand(string RefreshToken) : IRequest<Result<bool>>;
+public sealed record LogoutCommand : IRequest<Result<bool>>;
 
-public sealed class LogoutCommandHandler(ITenantDbContext tenantDbContext) : IRequestHandler<LogoutCommand, Result<bool>>
+public sealed class LogoutCommandHandler(
+    ITenantDbContextFactory tenantDbContextFactory,
+    ICurrentUserService currentUser) : IRequestHandler<LogoutCommand, Result<bool>>
 {
     public async Task<Result<bool>> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
-        var token = await tenantDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.Token == request.RefreshToken, cancellationToken);
-        if (token is null)
+        var tenantDb = currentUser.TenantDb;
+        if (string.IsNullOrWhiteSpace(tenantDb) || currentUser.UserId <= 0)
         {
             return Result<bool>.Ok(true);
         }
 
-        token.RevokedAtUtc = DateTime.UtcNow;
-        token.UpdatedAtUtc = DateTime.UtcNow;
-        await tenantDbContext.SaveChangesAsync(cancellationToken);
+        await using var db = tenantDbContextFactory.Create(tenantDb);
+        var tokens = await db.RefreshTokens
+            .Where(t => t.UserId == currentUser.UserId && t.RevokedAtUtc == null)
+            .ToListAsync(cancellationToken);
+
+        foreach (var token in tokens)
+        {
+            token.RevokedAtUtc = DateTime.UtcNow;
+        }
+
+        await db.SaveChangesAsync(cancellationToken);
         return Result<bool>.Ok(true);
     }
 }
